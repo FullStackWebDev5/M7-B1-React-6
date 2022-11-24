@@ -26,11 +26,13 @@ const DISPLAY = 'DISPLAY'
 const HIDE = 'HIDE'
 
 // - Action Creators - Functions which return an action object
-const incrementCount = () => ({
-	type: INCREMENT_COUNT
+const incrementCount = (value = 1) => ({
+	type: INCREMENT_COUNT,
+	payload: value
 })
-const decrementCount = () => ({
-	type: DECREMENT_COUNT
+const decrementCount = (value = 1) => ({
+	type: DECREMENT_COUNT,
+	payload: value
 })
 
 const display = () => ({
@@ -58,12 +60,12 @@ const countReducer = (state = countInitialState, action) => {
 		case INCREMENT_COUNT:
 			return {
 				...state,
-				count: state.count + 1
+				count: state.count + action.payload
 			}
 		case DECREMENT_COUNT: 
 			return {
 				...state,
-				count: state.count - 1
+				count: state.count - action.payload
 			}
 		default:
 			return state
@@ -105,11 +107,11 @@ const unsubscribe = store.subscribe(() => {})
 // .dispatch -> Dispatch actions to cause state updates
 
 
-store.dispatch(incrementCount())
+store.dispatch(incrementCount(2))
 store.dispatch(display())
 store.dispatch(incrementCount())
 store.dispatch(hide())
-store.dispatch(decrementCount())
+store.dispatch(decrementCount(5))
 
 unsubscribe()
 /* ----------------------------------------------*/
