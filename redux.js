@@ -1,5 +1,7 @@
 const redux = require('redux')
-const { createStore } = redux
+const { createStore, applyMiddleware, combineReducers } = redux
+const reduxLogger = require('redux-logger')
+const { createLogger } = reduxLogger
 
 /*
 	---------------------------------------------
@@ -20,13 +22,22 @@ const { createStore } = redux
 const INCREMENT_COUNT = 'INCREMENT_COUNT'
 const DECREMENT_COUNT = 'DECREMENT_COUNT'
 
+const DISPLAY = 'DISPLAY'
+const HIDE = 'HIDE'
+
 // - Action Creators - Functions which return an action object
 const incrementCount = () => ({
 	type: INCREMENT_COUNT
 })
-
 const decrementCount = () => ({
 	type: DECREMENT_COUNT
+})
+
+const display = () => ({
+	type: DISPLAY
+})
+const hide = () => ({
+	type: HIDE
 })
 
 /* ----------------------------------------------*/
@@ -39,11 +50,10 @@ const decrementCount = () => ({
 	- Contains logic to return updated state on basis of prevState and action
 */
 
-const initialState = {
-	count: 0
+const countInitialState = {
+	count: 0,
 }
-
-const reducer = (state = initialState, action) => {
+const countReducer = (state = countInitialState, action) => {
 	switch(action.type) {
 		case INCREMENT_COUNT:
 			return {
@@ -60,26 +70,46 @@ const reducer = (state = initialState, action) => {
 	}
 }
 
+const showInitialState = {
+	show: false,
+}
+const showReducer = (state = showInitialState, action) => {
+	switch(action.type) {
+		case DISPLAY:
+			return {
+				...state,
+				show: true
+			}
+		case HIDE: 
+			return {
+				...state,
+				show: false
+			}
+		default:
+			return state
+	}
+}
+
+const rootReducer = combineReducers({
+	countReducer,
+	showReducer
+})
+
 /* ----------------------------------------------*/
 // Redux Store
-const store = createStore(reducer)
+const store = createStore(rootReducer, applyMiddleware(createLogger()))
 // .subscribe -> Subscribing to the redux store, returns a reference to unsubscribe method
 const unsubscribe = store.subscribe(() => {})
 
 // .getState -> Get the current state of the redux store
 // .dispatch -> Dispatch actions to cause state updates
 
-console.log(store.getState())
 
 store.dispatch(incrementCount())
+store.dispatch(display())
 store.dispatch(incrementCount())
-store.dispatch(incrementCount())
-store.dispatch(incrementCount())
-store.dispatch(incrementCount())
-store.dispatch(incrementCount())
-store.dispatch(incrementCount())
-
-console.log(store.getState())
+store.dispatch(hide())
+store.dispatch(decrementCount())
 
 unsubscribe()
 /* ----------------------------------------------*/
